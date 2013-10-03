@@ -8,7 +8,7 @@ require  'json'
 write_to = File.open('address.txt', 'w')
 File.open('pairs.txt').each do |line|
   entity_1, entity_2 = line.split(",").each do |ent|
-    puts "xxx#{ent}xx"
+    puts "xxx#{ent}xx"  #checking that there is no extraneous chars around
     url= 'http://wolf.centralindex.com:80/entity?entity_id='+ent
     puts "trying #{url}"
     page_string = open(url) {|f| f.read}
