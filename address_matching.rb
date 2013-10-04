@@ -6,7 +6,7 @@ require  'json'
 # do the address matching and add the number to the file as well 
 
 write_to = File.open('address.txt', 'w')
-File.open('pairs.txt').each do |line|
+File.open('entity_match.txt').each do |line|
     entity_1, entity_2 = line.split(",").each do |ent|
       ent = ent.gsub(/\n/,"")
       puts "xxx#{ent}xx"
@@ -24,7 +24,8 @@ File.open('pairs.txt').each do |line|
        parsed["data"]["postal_address"]["county"].class == String ? (county = parsed["data"]["postal_address"]["county"]):(county="")
        parsed["data"]["postal_address"]["province"].class == String ? (province = parsed["data"]["postal_address"]["province"]):(province="")
        parsed["data"]["postal_address"]["postcode"].class == String ? (postcode = parsed["data"]["postal_address"]["postcode"]):(postcode="")
-       write_to.write parsed["data"]["name"]["name"]+"\t" \
+       write_to.write ent +"\t" \
+              + parsed["data"]["name"]["name"]+"\t" \
               + address1 +"\t" \
               + address2 +"\t" \
               + address3 +"\t" \
@@ -33,8 +34,8 @@ File.open('pairs.txt').each do |line|
               + county +"\t" \
               + province +"\t" \
               + postcode +"\t"
-     end          
-   end
+     end  #if     
+   end   # each
    #now make the API call to get the distance between the two entitities
    url= 'http://wolf.centralindex.com:80/tools/addressdiff?first_entity_id='+entity_1+'&second_entity_id='+entity_2
    puts "trying #{url}"
