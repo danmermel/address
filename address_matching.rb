@@ -5,16 +5,16 @@ require  'json'
 # get some entity info from each (name, address etc)
 # do the address matching and add the number to the file as well 
 
-write_to = File.open('uk_match.txt', 'w')
+write_to = File.open('uk_match2.txt', 'w')
 File.open('uk_pairs.txt').each do |line|
     entity_1, entity_2 = line.split(",").each do |ent|
       ent = ent.gsub(/\n/,"")
       puts "xxx#{ent}xx"
-      url= 'http://wolf.centralindex.com:80/entity?entity_id='+ent
+      url= 'http://192.168.3.24:5000/entity?entity_id='+ent
       puts "trying #{url}"
       page_string = open(url) {|f| f.read}
       parsed = JSON.parse(page_string)
-      if parsed["data"].include?("postal_address") then 
+      if (parsed["success"] && parsed["data"].include?("postal_address") ) then 
        #this is defensive code in case the fields don't exist for the entity address
        parsed["data"]["postal_address"]["address1"].class == String ? (address1 = parsed["data"]["postal_address"]["address1"]):(address1="")
        parsed["data"]["postal_address"]["address2"].class == String ? (address2 = parsed["data"]["postal_address"]["address2"]):(address2="")
@@ -37,11 +37,15 @@ File.open('uk_pairs.txt').each do |line|
      end  #if     
    end   # each
    #now make the API call to get the distance between the two entitities
-   url= 'http://wolf.centralindex.com:80/tools/addressdiff?first_entity_id='+entity_1+'&second_entity_id='+entity_2
-   puts "trying #{url}"
-   page_string = open(url) {|f| f.read}
-   parsed = JSON.parse(page_string)
-   #and add it to the file
-   write_to.write parsed["data"]["score"].to_s+"\n" 
+   begin
+      url= 'http://192.168.3.24:5000/tools/addressdiff2?first_entity_id='+entity_1+'&second_entity_id='+entity_2
+      puts "trying #{url}"
+      page_string = open(url) {|f| f.read}
+      parsed = JSON.parse(page_string)
+     #and add it to the file
+      write_to.write parsed["data"]["score"].to_s+"\n"
+   rescue OpenURI::HTTPError => ex
+      write_to.write "error \n"
+   end 
 end
 
