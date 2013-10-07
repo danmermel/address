@@ -5,8 +5,8 @@ require  'json'
 # get some entity info from each (name, address etc)
 # do the address matching and add the number to the file as well 
 
-write_to = File.open('address.txt', 'w')
-File.open('entity_match.txt').each do |line|
+write_to = File.open('uk_match.txt', 'w')
+File.open('uk_pairs.txt').each do |line|
     entity_1, entity_2 = line.split(",").each do |ent|
       ent = ent.gsub(/\n/,"")
       puts "xxx#{ent}xx"
